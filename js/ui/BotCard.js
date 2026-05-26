@@ -7,6 +7,7 @@ import { router } from '../core/Router.js';
 export class BotCard {
   /**
    * Generates a fully interactive Bot Card DOM node.
+   * Shares the same base nexus-card size/structure as WorldCard (parent-child inheritance).
    * @param {Object} bot - Bot details metadata
    * @returns {HTMLElement}
    */
@@ -17,7 +18,6 @@ export class BotCard {
     const favoriteButton = DOM.el('button', {
       class: `btn btn-secondary bot-fav-btn ${isFav ? 'favorited' : ''}`,
       'aria-label': isFav ? `Remove ${bot.name} from bookmarks` : `Bookmark ${bot.name}`,
-      style: { minWidth: '40px', padding: '10px 0' },
       onclick: (e) => {
         e.stopPropagation(); // Avoid card navigation
         stateManager.toggleFavorite(bot.id);
@@ -27,14 +27,33 @@ export class BotCard {
       }
     }, isFav ? '❤️' : '🤍');
 
-    // Create tagged categories
-    const tagElements = (bot.genres || []).map(genre => 
-      DOM.el('span', { class: 'tag tag-accent' }, genre)
+    // Create tagged categories — identical CSS classes as WorldCard tags
+    const tagsSource = bot.genres || bot.tags || [];
+    const tagElements = tagsSource.map(genre =>
+      DOM.el('span', { class: 'tag tag-sm' }, genre)
     );
 
-    // Assemble bot card structures
+    // Start Chat button — always visible (not just on hover)
+    const chatBtn = DOM.el('a', {
+      href: bot.chatEndpoint || '#',
+      class: 'btn btn-accent bot-chat-btn',
+      target: '_blank',
+      rel: 'noopener',
+      onclick: (e) => {
+        e.stopPropagation();
+        if (!bot.chatEndpoint) {
+          e.preventDefault();
+          alert('This agent is currently offline (chat endpoint not configured).');
+        }
+      }
+    },
+      DOM.el('i', { class: 'bi bi-chat-dots-fill' }),
+      ' Start Chat'
+    );
+
+    // Assemble bot card structures — same base nexus-card as WorldCard
     const cardElement = DOM.el('article', {
-      class: 'bot-card gpu-accelerated',
+      class: 'nexus-card bot-card gpu-accelerated',
       tabindex: '0',
       'aria-label': `View details of ${bot.name}`,
       onclick: () => {
@@ -47,56 +66,45 @@ export class BotCard {
         }
       }
     },
-      // 1. Illustration Background
+      // 1. Hero background illustration (card-image-layer shared with WorldCard)
       DOM.el('div', { class: 'card-image-layer' },
         DOM.el('img', {
           class: 'card-bg-image',
-          'data-src': bot.cardImage,
+          'data-src': bot.cardImage || bot.avatar,
           alt: `${bot.name} background design`
         })
       ),
-      // 2. Ambient lighting overlay
+      // 2. Ambient gradient overlay (shared)
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 3. Figma-Style Auto Layout Header Row
+      // 3. Figma-Style Auto Layout Header Row (shared structure, bot-specific avatar)
       DOM.el('div', { class: 'card-header' },
-        DOM.el('div', { style: { flex: '1' } }), // Spacer pushing avatar to right
+        // Bot-specific: Large prominent avatar in header (replaces world logo)
         DOM.el('div', { class: 'bot-avatar-container' },
           DOM.el('img', {
             class: 'bot-avatar-image',
             src: bot.avatar,
             alt: `${bot.name} profile avatar`
           })
+        ),
+        // Bot-specific: stats badge on right
+        DOM.el('div', { class: 'card-badge-top' },
+          DOM.el('i', { class: 'bi bi-chat-dots-fill', style: { color: 'var(--accent-gold)', fontSize: '0.65rem' } }),
+          ` ${bot.chats || 0}`,
+          DOM.el('i', { class: 'bi bi-heart-fill', style: { color: '#ef4444', fontSize: '0.65rem', marginLeft: '4px' } }),
+          ` ${bot.likes || 0}`
         )
       ),
-      // 4. Figma-Style Auto Layout Body Column
+      // 4. Figma-Style Auto Layout Body Column (shared structure)
       DOM.el('div', { class: 'card-body' },
-        DOM.el('h4', { style: { fontSize: '1.1rem', fontWeight: '700' } }, bot.name),
-        DOM.el('p', { class: 'card-description' }, bot.description),
+        DOM.el('div', { class: 'card-title' },
+          DOM.el('h3', {}, bot.name || bot.title || 'Unknown Bot'),
+          DOM.el('div', { class: 'card-title-divider' })
+        ),
+        DOM.el('p', { class: 'card-description' }, bot.description || bot.introduce || 'No description available.'),
         DOM.el('div', { class: 'tags-list' }, ...tagElements),
-        // 5. Actions drawer (reveals on hover)
+        // 5. Start chat CTA — always visible, part of card body
         DOM.el('div', { class: 'bot-card-actions' },
-          DOM.el('a', {
-            href: bot.chatEndpoint || '#',
-            class: 'btn btn-accent chat-link-action',
-            target: '_blank',
-            rel: 'noopener',
-            style: { flexGrow: '1', fontSize: '0.85rem' },
-            onclick: (e) => {
-              e.stopPropagation();
-              if (!bot.chatEndpoint) {
-                e.preventDefault();
-                alert('This agent is currently offline (chat endpoint not configured).');
-              }
-            }
-          }, 'Chat'),
-          DOM.el('button', {
-            class: 'btn btn-secondary',
-            style: { padding: '10px 14px', fontSize: '0.85rem' },
-            onclick: (e) => {
-              e.stopPropagation();
-              router.navigate(`/bot/${bot.id}`);
-            }
-          }, 'Open'),
+          chatBtn,
           favoriteButton
         )
       )

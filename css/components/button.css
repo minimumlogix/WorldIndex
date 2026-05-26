@@ -42,13 +42,14 @@
 }
 
 .btn-accent {
-  background-color: var(--accent, var(--primary-accent));
-  color: #ffffff;
+  background-color: var(--accent, var(--accent-gold, #c5a059));
+  color: #030508;
+  font-weight: 700;
 }
 
 .btn-accent:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 4px 15px rgba(var(--accent-rgb, 56, 189, 248), 0.25);
+  filter: brightness(1.12);
+  box-shadow: 0 4px 15px rgba(var(--accent-rgb, 197, 160, 89), 0.3);
 }
 
 /* Theme Toggle Button */
@@ -133,4 +134,12 @@
   .mobile-menu-btn {
     display: flex;
   }
+}
+
+/* Compact favorite button inside bot card actions */
+.bot-fav-btn {
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  line-height: 1;
+  flex-shrink: 0;
 }

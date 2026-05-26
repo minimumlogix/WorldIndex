@@ -457,3 +457,207 @@
   margin-top: 24px;
 }
 
+/* Two Column Landing Page Layout (Figma Auto Layout) */
+.landing-columns-wrapper {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.landing-main-col {
+  flex: 3;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.landing-sidebar-col {
+  flex: 1.2;
+  min-width: 290px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: calc(var(--header-height) + 16px);
+  max-height: calc(100vh - var(--header-height) - 48px);
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  margin: 0;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  transition: border-color var(--transition-fast);
+}
+
+.sidebar-search-input:focus {
+  border-color: var(--primary-accent);
+  outline: none;
+}
+
+.sidebar-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+/* Sidebar tags use .tag.tag-sm directly for uniform sizing */
+
+.sidebar-bots-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+/* Sidebar Bot Cards following Figma style */
+.sidebar-bot-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  align-items: flex-start;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.sidebar-bot-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-accent);
+}
+
+.sidebar-bot-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.sidebar-bot-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-bot-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-bot-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-bot-intro {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Sidebar Tabs Switching Panel (Figma Style) */
+.sidebar-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.sidebar-tab {
+  flex: 1;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 8px 4px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.sidebar-tab:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar-tab.active {
+  color: var(--text-gold);
+  border-color: var(--accent-gold);
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.08) 0%, rgba(197, 160, 89, 0.02) 100%);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.1);
+}
+
+/* Premium Sidebar Bot Card Layout matching World Cards exactly */
+.sidebar-bot-card-premium {
+  padding: 12px 14px 14px 14px !important;
+  border-radius: var(--border-radius-md) !important;
+  background-color: var(--bg-tertiary) !important;
+  margin-bottom: 0px;
+}
+
+/* Sidebar sort select wrapper layout adjustment */
+.landing-sidebar-col .sort-select-wrapper {
+  max-width: none;
+  width: 100%;
+}
+
+
+/* Responsive collapse on smaller viewports */
+@media (max-width: 1024px) {
+  .landing-columns-wrapper {
+    flex-direction: column;
+  }
+  .landing-sidebar-col {
+    position: static;
+    width: 100%;
+    max-height: none;
+  }
+}
+
+
+

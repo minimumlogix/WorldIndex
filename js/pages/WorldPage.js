@@ -165,8 +165,8 @@ export class WorldPage {
         ),
         DOM.el('div', { class: 'filter-group' },
           botSearch,
-          statusDropdown,
-          sortingDropdown
+          DOM.el('div', { class: 'sort-select-wrapper' }, statusDropdown),
+          DOM.el('div', { class: 'sort-select-wrapper' }, sortingDropdown)
         )
       ),
 

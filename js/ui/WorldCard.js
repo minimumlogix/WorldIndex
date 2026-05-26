@@ -27,7 +27,7 @@ export class WorldCard {
     // Create tag elements
     const tagElements = (world.genres || []).map(genre => 
       DOM.el('span', {
-        class: 'tag',
+        class: 'tag tag-sm',
         onclick: (e) => {
           e.stopPropagation(); // Avoid opening the card page
           router.navigate(`/tag/${genre}`);
@@ -43,7 +43,7 @@ export class WorldCard {
 
     // Assemble outer card shell
     const cardElement = DOM.el('article', {
-      class: 'world-card gpu-accelerated',
+      class: 'nexus-card world-card gpu-accelerated',
       style: {
         '--world-accent': worldAccent,
         '--world-accent-rgb': worldAccentRgb

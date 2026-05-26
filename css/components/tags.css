@@ -1,34 +1,33 @@
 /* css/components/tags.css */
-.tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
 
+/* ==========================================================================
+   Base Tag Component (Figma Style Auto Layout - Parent)
+   .tag is the root class — both World and Bot sections inherit from it.
+   ========================================================================== */
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 6px 12px;
   background-color: rgba(6, 9, 14, 0.8);
   border: 1px solid rgba(197, 160, 89, 0.18);
   border-radius: 8px;
   font-family: var(--font-serif);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--text-secondary);
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
   transition: all var(--transition-fast);
 }
 
 .tag svg {
   stroke-width: 1.5;
   opacity: 0.7;
+  flex-shrink: 0;
   transition: opacity var(--transition-fast);
 }
 
@@ -36,7 +35,7 @@
   border-color: var(--text-gold);
   color: var(--text-primary);
   background-color: rgba(197, 160, 89, 0.05);
-  box-shadow: 0 0 12px rgba(197, 160, 89, 0.1);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.1);
   transform: translateY(-1px);
 }
 
@@ -57,21 +56,41 @@
   stroke: #030508;
 }
 
-/* Scoped Accent tags for individual World Pages */
-.tag-accent {
-  transition: all var(--transition-fast);
+/* ==========================================================================
+   Tag Derivatives (Children — sizes and colors)
+   All tag variants MUST inherit from .tag above.
+   ========================================================================== */
+
+/* Smaller child: used inside cards and sidebar (both world and bot sections) */
+.tag.tag-sm {
+  padding: 3px 7px;
+  font-size: 0.6rem;
+  border-radius: 5px;
+  letter-spacing: 0.03em;
+  gap: 3px;
 }
 
-.tag-accent:hover {
+/* Accent color child: used on bot/world page genre filters */
+.tag.tag-accent:hover {
   background-color: rgba(var(--accent-rgb, 197, 160, 89), 0.12);
   border-color: var(--accent, var(--primary-accent));
   color: var(--text-primary);
   box-shadow: 0 0 10px rgba(var(--accent-rgb, 197, 160, 89), 0.15);
 }
 
-.tag-accent.active {
+.tag.tag-accent.active {
   background: var(--accent, var(--primary-accent));
   border-color: var(--accent, var(--primary-accent));
   color: #ffffff;
   box-shadow: 0 0 15px rgba(var(--accent-rgb, 197, 160, 89), 0.35);
+}
+
+/* ==========================================================================
+   Tags List Container (shared by both WorldCard and BotCard)
+   ========================================================================== */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
 }

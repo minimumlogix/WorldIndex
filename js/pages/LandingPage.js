@@ -9,6 +9,9 @@ import { Search } from '../ui/Search.js';
 import { Filter } from '../ui/Filter.js';
 import { GridManager } from '../ui/GridManager.js';
 import { SvgAnimator } from '../ui/SvgAnimator.js';
+import { router } from '../core/Router.js';
+import { WorldCard } from '../ui/WorldCard.js';
+import { BotCard } from '../ui/BotCard.js';
 
 
 export class LandingPage {
@@ -47,6 +50,33 @@ export class LandingPage {
     updateStats('mobile-stat-worlds', this.worlds.length);
     updateStats('mobile-stat-bots', allBots.length);
 
+    // Initialize Joyland dynamic bot states
+    this.joylandBots = [];
+    this.activeSidebarTag = null;
+    this.sidebarSearchQuery = '';
+
+    // Fetch dynamic public bots from joyland.ai profiles
+    const userIds = ['lMjZp', '2xYazJ', 'rd2be'];
+    try {
+      const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
+      results.forEach(res => {
+        const records = res?.result?.records || res?.bots || [];
+        records.forEach(bot => {
+          this.joylandBots.push({
+            id: bot.botId || Math.random().toString(),
+            name: bot.characterName || bot.name || 'Unnamed Bot',
+            avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
+            introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
+            chats: bot.botChats || bot.chatCount || '0',
+            likes: bot.botLikes || bot.likeCount || '0',
+            tags: bot.tags || []
+          });
+        });
+      });
+    } catch (e) {
+      console.warn('Could not fetch dynamic bots from Joyland:', e);
+    }
+
     // 4. Construct DOM frames
     const filterContainer = DOM.el('div', { class: 'tags-list' });
     const gridContainer = DOM.el('div', { class: 'world-grid gpu-accelerated' });
@@ -61,6 +91,45 @@ export class LandingPage {
       DOM.el('option', { value: 'popular' }, 'World Popularity')
     );
     sortDropdown.value = stateManager.getState('sortBy') || 'featured';
+
+    // Sidebar tabs & controls structures
+    this.activeSidebarTab = 'bots';
+    this.sidebarSearchQuery = '';
+    this.activeSidebarTag = null;
+    this.sidebarSortBy = 'chats'; // Default sort for bots
+
+    const sidebarTabs = DOM.el('div', { class: 'sidebar-tabs' });
+    const sidebarControls = DOM.el('div', { class: 'sidebar-controls' });
+    const sidebarContentContainer = DOM.el('div', { class: 'sidebar-bots-container' });
+
+    const botsTabBtn = DOM.el('button', {
+      class: `sidebar-tab ${this.activeSidebarTab === 'bots' ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTab = 'bots';
+        this.sidebarSearchQuery = '';
+        this.activeSidebarTag = null;
+        this.sidebarSortBy = 'chats';
+        botsTabBtn.classList.add('active');
+        worldsTabBtn.classList.remove('active');
+        this.renderSidebar(sidebarControls, sidebarContentContainer);
+      }
+    }, 'JOYLAND BOTS');
+
+    const worldsTabBtn = DOM.el('button', {
+      class: `sidebar-tab ${this.activeSidebarTab === 'worlds' ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTab = 'worlds';
+        this.sidebarSearchQuery = '';
+        this.activeSidebarTag = null;
+        this.sidebarSortBy = 'alphabetical';
+        worldsTabBtn.classList.add('active');
+        botsTabBtn.classList.remove('active');
+        this.renderSidebar(sidebarControls, sidebarContentContainer);
+      }
+    }, 'LOCAL WORLDS');
+
+    sidebarTabs.appendChild(botsTabBtn);
+    sidebarTabs.appendChild(worldsTabBtn);
 
     const pageContainer = DOM.el('div', { class: 'page-container landing-page-view' },
       // Glowing space curves + Compass logo
@@ -88,17 +157,26 @@ export class LandingPage {
         DOM.el('p', { style: { color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '12px' } }, config.tagline)
       ),
       
-      DOM.el('div', { class: 'filter-bar' },
-        DOM.el('div', { class: 'filter-group' },
-          DOM.el('span', { class: 'filter-label' }, 'Genres'),
-          filterContainer
+      DOM.el('div', { class: 'landing-columns-wrapper' },
+        DOM.el('div', { class: 'landing-main-col' },
+          DOM.el('div', { class: 'filter-bar' },
+            DOM.el('div', { class: 'filter-group' },
+              DOM.el('span', { class: 'filter-label' }, 'Genres'),
+              filterContainer
+            ),
+            DOM.el('div', { class: 'filter-group', style: { alignItems: 'flex-start' } },
+              DOM.el('span', { class: 'filter-label', style: { marginBottom: '8px' } }, 'Sort By'),
+              DOM.el('div', { class: 'sort-select-wrapper' }, sortDropdown)
+            )
+          ),
+          gridContainer
         ),
-        DOM.el('div', { class: 'filter-group', style: { alignItems: 'flex-start' } },
-          DOM.el('span', { class: 'filter-label', style: { marginBottom: '8px' } }, 'Sort By'),
-          DOM.el('div', { class: 'sort-select-wrapper' }, sortDropdown)
+        DOM.el('aside', { class: 'landing-sidebar-col' },
+          sidebarTabs,
+          sidebarControls,
+          sidebarContentContainer
         )
-      ),
-      gridContainer
+      )
     );
 
     DOM.clear(this.appRoot);
@@ -107,6 +185,9 @@ export class LandingPage {
     // Observe hero compass logo
     const heroLogo = pageContainer.querySelector('.hero-compass-logo');
     if (heroLogo) SvgAnimator.observeVisibility(heroLogo);
+
+    // Initialize sidebar
+    this.renderSidebar(sidebarControls, sidebarContentContainer);
 
     // 5. Connect UI Controllers
     this.gridManager = new GridManager(gridContainer, 'world');
@@ -143,6 +224,234 @@ export class LandingPage {
     this.gridManager.render(filtered);
   }
 
+  generateFingerprint() {
+    return (
+      Math.random().toString(36).slice(2) +
+      Math.random().toString(36).slice(2)
+    );
+  }
+
+  async fetchPublicBots(userId) {
+    const url = `https://api.joyland.ai/profile/public-bots?userId=${userId}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Language': 'en',
+          'Fingerprint': this.generateFingerprint(),
+          'Origin': 'https://www.joyland.ai',
+          'Referer': 'https://www.joyland.ai/'
+        }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.warn(`Error fetching bots for ${userId}:`, error);
+      return null;
+    }
+  }
+
+  parseCount(val) {
+    if (!val) return 0;
+    const str = String(val).toLowerCase().trim();
+    if (str.endsWith('k')) {
+      return parseFloat(str) * 1000;
+    }
+    if (str.endsWith('m')) {
+      return parseFloat(str) * 1000000;
+    }
+    return parseInt(str, 10) || 0;
+  }
+
+  renderSidebar(controlsNode, contentNode) {
+    DOM.clear(controlsNode);
+    DOM.clear(contentNode);
+
+    // 1. Search Input for Sidebar (Capsule layout)
+    const searchInput = DOM.el('input', {
+      type: 'text',
+      class: 'search-input-box sidebar-search-input',
+      placeholder: this.activeSidebarTab === 'bots' ? 'Search Joyland bots...' : 'Search local worlds...',
+      value: this.sidebarSearchQuery,
+      oninput: (e) => {
+        this.sidebarSearchQuery = e.target.value.toLowerCase();
+        if (this.activeSidebarTab === 'bots') {
+          this.filterAndRenderSidebarBots(contentNode);
+        } else {
+          this.filterAndRenderSidebarWorlds(contentNode);
+        }
+      }
+    });
+    controlsNode.appendChild(searchInput);
+
+    // 2. Sort Dropdown (For Bots or Worlds) - wrapped in custom chevron wrapper
+    let sortSelectWrapper;
+    if (this.activeSidebarTab === 'bots') {
+      const select = DOM.el('select', {
+        class: 'sort-select',
+        onchange: (e) => {
+          this.sidebarSortBy = e.target.value;
+          this.filterAndRenderSidebarBots(contentNode);
+        }
+      },
+        DOM.el('option', { value: 'chats' }, 'Sort by Chats'),
+        DOM.el('option', { value: 'likes' }, 'Sort by Likes'),
+        DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)')
+      );
+      select.value = this.sidebarSortBy;
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper', style: { width: '100%', marginTop: '8px' } }, select);
+      controlsNode.appendChild(sortSelectWrapper);
+    } else {
+      const select = DOM.el('select', {
+        class: 'sort-select',
+        onchange: (e) => {
+          this.sidebarSortBy = e.target.value;
+          this.filterAndRenderSidebarWorlds(contentNode);
+        }
+      },
+        DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'),
+        DOM.el('option', { value: 'popular' }, 'Bot Density')
+      );
+      select.value = this.sidebarSortBy;
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper', style: { width: '100%', marginTop: '8px' } }, select);
+      controlsNode.appendChild(sortSelectWrapper);
+    }
+
+    // 3. Tags container
+    const tagsContainer = DOM.el('div', { class: 'sidebar-tags-list', style: { marginTop: '12px' } });
+    controlsNode.appendChild(tagsContainer);
+
+    // 4. Render initial tag options and content list
+    this.renderSidebarTags(tagsContainer, contentNode);
+    if (this.activeSidebarTab === 'bots') {
+      this.filterAndRenderSidebarBots(contentNode);
+    } else {
+      this.filterAndRenderSidebarWorlds(contentNode);
+    }
+  }
+
+  renderSidebarTags(tagsContainer, contentNode) {
+    DOM.clear(tagsContainer);
+    
+    let allTags = [];
+    if (this.activeSidebarTab === 'bots') {
+      allTags = Array.from(
+        new Set(this.joylandBots.flatMap(b => b.tags || []))
+      ).filter(Boolean).slice(0, 15);
+    } else {
+      allTags = Array.from(
+        new Set(this.worlds.flatMap(w => w.genres || []))
+      ).filter(Boolean).slice(0, 15);
+    }
+    
+    // "All" filter tag
+    const allBtn = DOM.el('span', {
+      class: `tag tag-sm ${!this.activeSidebarTag ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTag = null;
+        this.renderSidebarTags(tagsContainer, contentNode);
+        if (this.activeSidebarTab === 'bots') {
+          this.filterAndRenderSidebarBots(contentNode);
+        } else {
+          this.filterAndRenderSidebarWorlds(contentNode);
+        }
+      }
+    }, 'ALL');
+    tagsContainer.appendChild(allBtn);
+
+    allTags.forEach(tag => {
+      const isSelected = this.activeSidebarTag === tag;
+      const tagBtn = DOM.el('span', {
+        class: `tag tag-sm ${isSelected ? 'active' : ''}`,
+        onclick: () => {
+          this.activeSidebarTag = isSelected ? null : tag;
+          this.renderSidebarTags(tagsContainer, contentNode);
+          if (this.activeSidebarTab === 'bots') {
+            this.filterAndRenderSidebarBots(contentNode);
+          } else {
+            this.filterAndRenderSidebarWorlds(contentNode);
+          }
+        }
+      }, tag.toUpperCase());
+      tagsContainer.appendChild(tagBtn);
+    });
+  }
+
+  filterAndRenderSidebarBots(container) {
+    DOM.clear(container);
+    
+    let filtered = this.joylandBots.filter(bot => {
+      const matchesSearch = !this.sidebarSearchQuery || 
+        bot.name.toLowerCase().includes(this.sidebarSearchQuery) || 
+        bot.introduce.toLowerCase().includes(this.sidebarSearchQuery);
+        
+      const matchesTag = !this.activeSidebarTag || bot.tags.includes(this.activeSidebarTag);
+      
+      return matchesSearch && matchesTag;
+    });
+
+    // Apply Sorting
+    filtered.sort((a, b) => {
+      if (this.sidebarSortBy === 'chats') {
+        return this.parseCount(b.chats) - this.parseCount(a.chats);
+      }
+      if (this.sidebarSortBy === 'likes') {
+        return this.parseCount(b.likes) - this.parseCount(a.likes);
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    if (filtered.length === 0) {
+      container.appendChild(DOM.el('div', {
+        style: { textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }
+      }, 'No matching Joyland bots found.'));
+      return;
+    }
+
+    filtered.forEach(bot => {
+      const card = BotCard.render(bot);
+      card.classList.add('sidebar-bot-card-premium');
+      container.appendChild(card);
+    });
+  }
+
+  filterAndRenderSidebarWorlds(container) {
+    DOM.clear(container);
+    
+    let filtered = this.worlds.filter(world => {
+      const matchesSearch = !this.sidebarSearchQuery || 
+        world.title.toLowerCase().includes(this.sidebarSearchQuery) || 
+        world.description.toLowerCase().includes(this.sidebarSearchQuery);
+        
+      const matchesTag = !this.activeSidebarTag || (world.genres || []).includes(this.activeSidebarTag);
+      
+      return matchesSearch && matchesTag;
+    });
+
+    // Apply Sorting
+    filtered.sort((a, b) => {
+      if (this.sidebarSortBy === 'popular') {
+        return (b.botCount || 0) - (a.botCount || 0);
+      }
+      return a.title.localeCompare(b.title);
+    });
+
+    if (filtered.length === 0) {
+      container.appendChild(DOM.el('div', {
+        style: { textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }
+      }, 'No matching local worlds found.'));
+      return;
+    }
+
+    filtered.forEach(world => {
+      const card = WorldCard.render(world);
+      card.classList.add('sidebar-bot-card-premium');
+      container.appendChild(card);
+    });
+  }
+
   /**
    * Resets active search widgets and removes listeners.
    */
@@ -159,3 +468,5 @@ export class LandingPage {
   }
 }
 export default LandingPage;
+
+
