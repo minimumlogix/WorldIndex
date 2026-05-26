@@ -2,7 +2,7 @@
 import { DOM } from '../utils/DOM.js';
 import { lazyLoader } from './LazyLoader.js';
 import { HoverPreview } from './HoverPreview.js';
-import { SvgAnimator } from '../ui/SvgAnimator.js';
+import { SvgAnimator } from './SvgAnimator.js';
 import { router } from '../core/Router.js';
 
 export class WorldCard {

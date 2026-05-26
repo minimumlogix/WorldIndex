@@ -115,8 +115,12 @@ class App {
   }
 }
 
-// Boot application upon DOM resolution
-window.addEventListener('DOMContentLoaded', () => {
+// Boot application
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => {
+    new App();
+  });
+} else {
   new App();
-});
+}
 export default App;
