@@ -130,7 +130,7 @@
 }
 
 .world-card:hover .card-logo-container {
-  transform: scale(1.08) rotate(5deg);
+  transform: scale(1.08);
 }
 
 .card-logo-container svg {

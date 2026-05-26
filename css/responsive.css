@@ -75,6 +75,43 @@
   }
 }
 
+/* World Page Responsive Fixes */
+@media (max-width: 768px) {
+  .world-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px var(--spacing-mobile);
+    gap: 16px;
+  }
+  
+  .world-page-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .world-page-title {
+    font-size: 1.8rem;
+  }
+  
+  .lore-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .lore-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-right: 0;
+    padding-bottom: 12px;
+  }
+  
+  .lore-nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
 /* Reduced Motion Settings for Accessibility */
 @media (prefers-reduced-motion: reduce) {
   * {

@@ -56,9 +56,9 @@ export class WorldPage {
     }
 
     // 4. Construct DOM Layout Elements
-    const logoWrapper = DOM.el('div', { class: 'card-logo-container', style: { width: '80px', height: '80px', flexShrink: '0' } });
-    const loreContent = DOM.el('div', { class: 'lore-body-content', style: { minWidth: '0' } });
-    const loreNav = DOM.el('ul', { class: 'lore-nav-list', style: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' } });
+    const logoWrapper = DOM.el('div', { class: 'card-logo-container world-page-logo' });
+    const loreContent = DOM.el('div', { class: 'lore-body-content' });
+    const loreNav = DOM.el('ul', { class: 'lore-nav-list' });
     const botGridWrapper = DOM.el('div', { class: 'bot-grid gpu-accelerated' });
     const paginationWrapper = DOM.el('div', { class: 'grid-pagination' });
     const genresFilterWrapper = DOM.el('div', { class: 'tags-list' });
@@ -114,12 +114,6 @@ export class WorldPage {
           lorePanel.classList.toggle('collapsed');
           const isCollapsed = lorePanel.classList.contains('collapsed');
           collapseButton.textContent = isCollapsed ? 'Expand Chronicles' : 'Collapse Chronicles';
-          
-          if (isCollapsed) {
-            lorePanel.style.maxHeight = '80px';
-          } else {
-            lorePanel.style.maxHeight = '2000px';
-          }
         }
       }
     }, 'Collapse Chronicles');
@@ -130,27 +124,15 @@ export class WorldPage {
       DOM.el('section', {
         class: 'world-hero gpu-accelerated',
         style: {
-          position: 'relative',
-          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.45) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.world.path}/${this.world.coverImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: 'var(--border-radius-lg)',
-          padding: '60px var(--spacing-desktop)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '32px',
-          flexWrap: 'wrap',
-          marginBottom: '32px',
-          border: '1px solid var(--border-color)',
-          boxShadow: 'var(--shadow-lg)'
+          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.45) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.world.path}/${this.world.coverImage})`
         }
       },
         logoWrapper,
-        DOM.el('div', { class: 'hero-text-block', style: { flexGrow: '1', flexBasis: '400px' } },
-          DOM.el('h1', { style: { fontSize: '3rem', fontWeight: '800', marginBottom: '8px', letterSpacing: '-0.02em' } }, this.world.title),
-          DOM.el('p', { style: { fontSize: '1.15rem', color: 'var(--text-secondary)', marginBottom: '16px', maxWidth: '800px' } }, this.world.description),
-          DOM.el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', color: 'var(--text-muted)' } },
-            DOM.el('span', {}, DOM.el('strong', { style: { color: 'var(--accent, var(--primary-accent))' } }, this.bots.length), ' Agents'),
+        DOM.el('div', { class: 'hero-text-block' },
+          DOM.el('h1', { class: 'world-page-title' }, this.world.title),
+          DOM.el('p', { class: 'world-page-description' }, this.world.description),
+          DOM.el('div', { class: 'world-page-stats' },
+            DOM.el('span', {}, DOM.el('strong', {}, this.bots.length), ' Agents'),
             DOM.el('span', {}, '•'),
             DOM.el('span', {}, DOM.el('strong', {}, (this.world.genres || []).join(' / ')))
           )
@@ -160,41 +142,15 @@ export class WorldPage {
       // 2. Collapsible Lore Panel
       DOM.el('section', {
         id: 'world-lore-container',
-        class: 'world-lore-panel',
-        style: {
-          backgroundColor: 'var(--card)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--border-radius-md)',
-          padding: '24px var(--spacing-desktop)',
-          marginBottom: '40px',
-          maxHeight: '2000px',
-          transition: 'max-height var(--transition-slow)',
-          overflow: 'hidden'
-        }
+        class: 'world-lore-panel'
       },
-        DOM.el('div', {
-          style: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '1px solid var(--border-color)',
-            paddingBottom: '16px',
-            marginBottom: '20px'
-          }
-        },
-          DOM.el('h2', { style: { fontSize: '1.25rem', fontWeight: '700' } }, 'Historical Logs & Chronicles'),
+        DOM.el('div', { class: 'lore-header-wrapper' },
+          DOM.el('h2', { class: 'lore-header-title' }, 'Historical Logs & Chronicles'),
           collapseButton
         ),
-        DOM.el('div', {
-          class: 'lore-grid',
-          style: {
-            display: 'grid',
-            gridTemplateColumns: 'minmax(180px, 1fr) 4fr',
-            gap: '32px'
-          }
-        },
-          DOM.el('aside', { style: { borderRight: '1px solid var(--border-color)', paddingRight: '16px' } },
-            DOM.el('h4', { style: { fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: '700', letterSpacing: '0.05em' } }, 'Index Sections'),
+        DOM.el('div', { class: 'lore-grid' },
+          DOM.el('aside', { class: 'lore-sidebar' },
+            DOM.el('h4', { class: 'lore-sidebar-title' }, 'Index Sections'),
             loreNav
           ),
           loreContent
