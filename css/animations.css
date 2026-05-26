@@ -68,7 +68,7 @@
   stroke-width: 2.5px !important;
 }
 
-/* Cyber Neon triangle logo hover overrides */
+/* NeonVeil triangle logo hover overrides */
 .world-card:hover .world-svg-logo .cyber-triangle {
   stroke-width: 3.5px !important;
   filter: drop-shadow(0 0 8px var(--world-accent, var(--accent-gold))) !important;

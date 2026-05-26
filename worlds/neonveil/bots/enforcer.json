@@ -1,7 +1,7 @@
 {
   "id": "enforcer",
   "name": "Corp Enforcer",
-  "world": "cyber-neon",
+  "world": "neonveil",
   "description": "Subdermal-armored cyber security agent enforcing corporate laws.",
   "genres": ["enforcer", "combat", "heavy"],
   "cardImage": "images/enforcer_card.svg",

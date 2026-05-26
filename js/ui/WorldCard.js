@@ -18,7 +18,7 @@ export class WorldCard {
     // Resolve color tokens based on world configuration
     const accentColors = {
       abyss: { hex: '#f03e3e', rgb: '240, 62, 62' },
-      'cyber-neon': { hex: '#ff007f', rgb: '255, 0, 127' }
+      'neonveil': { hex: '#aa0000', rgb: '170, 0, 0' }
     };
     
     const worldAccent = world.accentColor || accentColors[world.id]?.hex || '#c5a059';
