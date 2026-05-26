@@ -242,7 +242,6 @@ export class WorldPage {
         const svg = logoWrapper.querySelector('svg');
         if (svg) {
           SvgAnimator.initParallax(logoWrapper, 10);
-          SvgAnimator.triggerDrawAnimation(svg);
         }
       })
       .catch(err => {

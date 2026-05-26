@@ -28,16 +28,13 @@ export class SvgAnimator {
       const transX = (x / rect.width) * intensity;
       const transY = (y / rect.height) * intensity;
       
-      // Map rotation angles
-      const rotateX = -(y / rect.height) * (intensity * 1.5);
-      const rotateY = (x / rect.width) * (intensity * 1.5);
-
-      svg.style.transform = `translate3d(${transX}px, ${transY}px, 20px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      // Only translate, no tilt/rotation
+      svg.style.transform = `translate3d(${transX}px, ${transY}px, 20px)`;
     });
 
     wrapper.addEventListener('mouseleave', () => {
       svg.style.transition = 'transform var(--transition-slow)';
-      svg.style.transform = 'translate3d(0, 0, 0) rotateX(0) rotateY(0)';
+      svg.style.transform = 'translate3d(0, 0, 0)';
     });
   }
 

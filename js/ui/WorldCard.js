@@ -126,7 +126,7 @@ export class WorldCard {
         const svg = logoWrapper.querySelector('svg');
         if (svg) {
           SvgAnimator.initParallax(logoWrapper, 6);
-          SvgAnimator.triggerDrawAnimation(svg);
+          // Removed triggerDrawAnimation(svg) to allow CSS animations to run infinitely
         }
       })
       .catch(err => {

@@ -24,9 +24,8 @@ class StateManager {
       if (savedTheme) {
         this.state.theme = savedTheme;
       } else {
-        // Respect system setting if preferred
-        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-        this.state.theme = prefersLight ? 'light-theme' : 'dark-theme';
+        // Dark mode on by default
+        this.state.theme = 'dark-theme';
       }
 
       const savedFavorites = localStorage.getItem('world_nexus_favorites');
