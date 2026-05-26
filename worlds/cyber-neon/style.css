@@ -1,0 +1,14 @@
+:root {
+  --primary: #120917;
+  --secondary: #211029;
+  --bg: #09040c;
+  --card: #190c1e;
+  --accent: #ff007f;
+  --font: 'Outfit', sans-serif;
+  --animation-speed: 0.8s;
+}
+
+.world-theme {
+  background-color: var(--bg);
+  color: #f1e9f5;
+}

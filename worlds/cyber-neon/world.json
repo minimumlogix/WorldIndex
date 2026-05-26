@@ -1,0 +1,17 @@
+{
+  "id": "cyber-neon",
+  "title": "Cyber Neon",
+  "description": "High tech, low life. Mega-corporations and hacker syndicates clash in a neon-drenched metropolis.",
+  "genres": ["cyberpunk", "action", "synthwave"],
+  "coverImage": "cover.png",
+  "logo": "logo.svg",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 2,
+  "hoverPreview": true,
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
+  "featuredBots": ["hacker", "enforcer"]
+}
