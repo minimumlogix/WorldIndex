@@ -38,8 +38,49 @@ export class SvgAnimator {
     });
   }
 
+  static logoObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window 
+    ? new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            // If the element has a nested SVG, also propagate in-view class to svg itself
+            const svg = entry.target.querySelector('svg') || (entry.target.tagName.toLowerCase() === 'svg' ? entry.target : null);
+            if (svg) svg.classList.add('in-view');
+          } else {
+            entry.target.classList.remove('in-view');
+            const svg = entry.target.querySelector('svg') || (entry.target.tagName.toLowerCase() === 'svg' ? entry.target : null);
+            if (svg) svg.classList.remove('in-view');
+          }
+        });
+      }, { threshold: 0.05 }) 
+    : null;
+
   /**
-   * Triggers stroke drawing animation programmatically for SVG children.
+   * Registers a logo element to animate when present in viewport.
+   * @param {HTMLElement} element - Logo container or SVG node
+   */
+  static observeVisibility(element) {
+    if (this.logoObserver && element) {
+      this.logoObserver.observe(element);
+    } else if (element) {
+      element.classList.add('in-view');
+      const svg = element.querySelector('svg') || (element.tagName.toLowerCase() === 'svg' ? element : null);
+      if (svg) svg.classList.add('in-view');
+    }
+  }
+
+  /**
+   * Unregisters a logo element from viewport observation.
+   * @param {HTMLElement} element
+   */
+  static unobserveVisibility(element) {
+    if (this.logoObserver && element) {
+      this.logoObserver.unobserve(element);
+    }
+  }
+
+  /**
+   * Programmatically triggers stroke drawing animation for SVG children.
    * @param {SVGElement} svg - Target SVG
    */
   static triggerDrawAnimation(svg) {
@@ -66,3 +107,4 @@ export class SvgAnimator {
   }
 }
 export default SvgAnimator;
+

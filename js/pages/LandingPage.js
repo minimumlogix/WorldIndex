@@ -8,6 +8,8 @@ import { globalEventBus } from '../core/EventBus.js';
 import { Search } from '../ui/Search.js';
 import { Filter } from '../ui/Filter.js';
 import { GridManager } from '../ui/GridManager.js';
+import { SvgAnimator } from '../ui/SvgAnimator.js';
+
 
 export class LandingPage {
   /**
@@ -101,6 +103,10 @@ export class LandingPage {
 
     DOM.clear(this.appRoot);
     this.appRoot.appendChild(pageContainer);
+
+    // Observe hero compass logo
+    const heroLogo = pageContainer.querySelector('.hero-compass-logo');
+    if (heroLogo) SvgAnimator.observeVisibility(heroLogo);
 
     // 5. Connect UI Controllers
     this.gridManager = new GridManager(gridContainer, 'world');

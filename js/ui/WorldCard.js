@@ -82,30 +82,33 @@ export class WorldCard {
       DOM.el('div', { class: 'card-slideshow-layer' }),
       // 3. Gradient
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 4. Top-Left Logo Logo wrapper
-      logoWrapper,
-      // 5. Top-Right Bot Badge
-      DOM.el('div', { class: 'card-badge-top' },
-        DOM.el('svg', {
-          viewBox: '0 0 24 24',
-          width: '12',
-          height: '12',
-          fill: 'none',
-          stroke: 'currentColor',
-          strokeWidth: '2'
-        },
-          DOM.el('path', { d: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' }),
-          DOM.el('circle', { cx: '12', cy: '7', r: '4' })
+      // 4. Figma-Style Auto Layout Header Row
+      DOM.el('div', { class: 'card-header' },
+        logoWrapper,
+        DOM.el('div', { class: 'card-badge-top' },
+          DOM.el('svg', {
+            viewBox: '0 0 24 24',
+            width: '12',
+            height: '12',
+            fill: 'none',
+            stroke: 'currentColor',
+            strokeWidth: '2'
+          },
+            DOM.el('path', { d: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' }),
+            DOM.el('circle', { cx: '12', cy: '7', r: '4' })
+          ),
+          DOM.el('span', {}, `${world.botCount || 0} Bots`)
+        )
+      ),
+      // 5. Figma-Style Auto Layout Body Column
+      DOM.el('div', { class: 'card-body' },
+        DOM.el('div', { class: 'card-title' },
+          DOM.el('h3', {}, world.title),
+          DOM.el('div', { class: 'card-title-divider' })
         ),
-        DOM.el('span', {}, `${world.botCount || 0} Bots`)
-      ),
-      // 6. Logo & Details
-      DOM.el('div', { class: 'card-title' },
-        DOM.el('h3', {}, world.title),
-        DOM.el('div', { class: 'card-title-divider' })
-      ),
-      DOM.el('p', { class: 'card-description' }, world.description),
-      DOM.el('div', { class: 'tags-list' }, ...tagElements)
+        DOM.el('p', { class: 'card-description' }, world.description),
+        DOM.el('div', { class: 'tags-list' }, ...tagElements)
+      )
     );
 
     // Register cover image to lazy load
@@ -128,11 +131,13 @@ export class WorldCard {
           SvgAnimator.initParallax(logoWrapper, 6);
           // Removed triggerDrawAnimation(svg) to allow CSS animations to run infinitely
         }
+        SvgAnimator.observeVisibility(logoWrapper);
       })
       .catch(err => {
         console.warn(`Could not fetch SVG logo inline for "${world.id}":`, err);
         // Text fallback
         logoWrapper.appendChild(DOM.el('span', { class: 'logo-text' }, world.title.slice(0, 2).toUpperCase()));
+        SvgAnimator.observeVisibility(logoWrapper);
       });
 
     return cardElement;

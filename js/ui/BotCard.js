@@ -55,45 +55,50 @@ export class BotCard {
           alt: `${bot.name} background design`
         })
       ),
-      // 2. Circle Avatar
-      DOM.el('div', { class: 'bot-avatar-container' },
-        DOM.el('img', {
-          class: 'bot-avatar-image',
-          src: bot.avatar,
-          alt: `${bot.name} profile avatar`
-        })
-      ),
-      // 3. Ambient lighting overlay
+      // 2. Ambient lighting overlay
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 4. Content Text
-      DOM.el('h4', { style: { fontSize: '1.25rem', fontWeight: '700', marginBottom: '4px' } }, bot.name),
-      DOM.el('p', { class: 'card-description', style: { marginBottom: '12px' } }, bot.description),
-      DOM.el('div', { class: 'tags-list' }, ...tagElements),
-      // 5. Actions drawer (reveals on hover)
-      DOM.el('div', { class: 'bot-card-actions' },
-        DOM.el('a', {
-          href: bot.chatEndpoint || '#',
-          class: 'btn btn-accent chat-link-action',
-          target: '_blank',
-          rel: 'noopener',
-          style: { flexGrow: '1', fontSize: '0.85rem' },
-          onclick: (e) => {
-            e.stopPropagation();
-            if (!bot.chatEndpoint) {
-              e.preventDefault();
-              alert('This agent is currently offline (chat endpoint not configured).');
+      // 3. Figma-Style Auto Layout Header Row
+      DOM.el('div', { class: 'card-header' },
+        DOM.el('div', { style: { flex: '1' } }), // Spacer pushing avatar to right
+        DOM.el('div', { class: 'bot-avatar-container' },
+          DOM.el('img', {
+            class: 'bot-avatar-image',
+            src: bot.avatar,
+            alt: `${bot.name} profile avatar`
+          })
+        )
+      ),
+      // 4. Figma-Style Auto Layout Body Column
+      DOM.el('div', { class: 'card-body' },
+        DOM.el('h4', { style: { fontSize: '1.1rem', fontWeight: '700' } }, bot.name),
+        DOM.el('p', { class: 'card-description' }, bot.description),
+        DOM.el('div', { class: 'tags-list' }, ...tagElements),
+        // 5. Actions drawer (reveals on hover)
+        DOM.el('div', { class: 'bot-card-actions' },
+          DOM.el('a', {
+            href: bot.chatEndpoint || '#',
+            class: 'btn btn-accent chat-link-action',
+            target: '_blank',
+            rel: 'noopener',
+            style: { flexGrow: '1', fontSize: '0.85rem' },
+            onclick: (e) => {
+              e.stopPropagation();
+              if (!bot.chatEndpoint) {
+                e.preventDefault();
+                alert('This agent is currently offline (chat endpoint not configured).');
+              }
             }
-          }
-        }, 'Chat'),
-        DOM.el('button', {
-          class: 'btn btn-secondary',
-          style: { padding: '10px 14px', fontSize: '0.85rem' },
-          onclick: (e) => {
-            e.stopPropagation();
-            router.navigate(`/bot/${bot.id}`);
-          }
-        }, 'Open'),
-        favoriteButton
+          }, 'Chat'),
+          DOM.el('button', {
+            class: 'btn btn-secondary',
+            style: { padding: '10px 14px', fontSize: '0.85rem' },
+            onclick: (e) => {
+              e.stopPropagation();
+              router.navigate(`/bot/${bot.id}`);
+            }
+          }, 'Open'),
+          favoriteButton
+        )
       )
     );
 

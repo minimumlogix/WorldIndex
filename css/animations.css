@@ -47,10 +47,14 @@
   100% { transform: rotate(360deg); }
 }
 
-.spin-hover:hover {
-  animation: compass-spin 12s linear infinite;
+.spin-hover:hover,
+.header-compass-logo.in-view,
+.hero-compass-logo.in-view,
+.footer-compass-logo.in-view {
+  animation: compass-spin 16s linear infinite;
   transform-origin: center;
 }
+
 
 /* Interactive SVG Card Hover Accelerations */
 /* When hovering over the world card, we dynamically accelerate its inline SVG animations */

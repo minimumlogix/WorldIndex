@@ -3,6 +3,7 @@ import { router } from './core/Router.js';
 import { globalEventBus } from './core/EventBus.js';
 import { stateManager } from './core/StateManager.js';
 import { Loader } from './core/Loader.js';
+import { SvgAnimator } from './ui/SvgAnimator.js';
 
 import { LandingPage } from './pages/LandingPage.js';
 import { WorldPage } from './pages/WorldPage.js';
@@ -20,6 +21,12 @@ class App {
     // 1. Establish initial theme configuration
     const activeTheme = stateManager.getState('theme') || 'dark-theme';
     document.body.classList.add(activeTheme);
+
+    // Observe global compass logos
+    const headerLogo = document.querySelector('.header-compass-logo');
+    if (headerLogo) SvgAnimator.observeVisibility(headerLogo);
+    const footerLogo = document.querySelector('.footer-compass-logo');
+    if (footerLogo) SvgAnimator.observeVisibility(footerLogo);
 
     // 2. Bind theme toggler buttons
     const themeBtn = document.getElementById('theme-toggle');

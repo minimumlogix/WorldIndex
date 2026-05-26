@@ -199,10 +199,12 @@ export class WorldPage {
         if (svg) {
           SvgAnimator.initParallax(logoWrapper, 10);
         }
+        SvgAnimator.observeVisibility(logoWrapper);
       })
       .catch(err => {
         console.warn(`Could not render world page SVG logo for "${this.worldId}":`, err);
         logoWrapper.appendChild(DOM.el('span', { class: 'logo-text', style: { fontSize: '1.5rem', fontWeight: '800' } }, this.world.title.slice(0, 2).toUpperCase()));
+        SvgAnimator.observeVisibility(logoWrapper);
       });
 
     // 8. Register state subscriptions for redraws
